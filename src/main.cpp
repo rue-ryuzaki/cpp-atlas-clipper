@@ -37,8 +37,6 @@
 #include <fstream>
 #include <iostream>
 
-#include <SDL2/SDL_image.h>
-
 #include <argparse/argparse.hpp>
 
 #include "image.h"
