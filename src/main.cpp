@@ -190,7 +190,7 @@ int main(int argc, char const* argv[])
             .help("input atlas file");
     parser.add_argument("-o")
             .action("append")
-            .metavar("FILE", "X", "Y", "W", "H")
+            .metavar("'FILE X Y W H'")
             .nargs(1)
             .help("output clipped image");
 
