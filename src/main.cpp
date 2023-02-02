@@ -233,7 +233,7 @@ int main(int argc, char const* argv[])
                 return res;
             }
         }
-        subImage.save_png(output);
+        subImage.savePng(output);
         std::cout << "[ OK ] File '" << output << "' generated" << std::endl;
     }
 

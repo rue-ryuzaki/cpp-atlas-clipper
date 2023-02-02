@@ -21,9 +21,9 @@ public:
     bool load(std::string const& file);
     bool load(std::vector<uint8_t> const& data);
 
-    void save_png(std::string const& file);
+    void savePng(std::string const& file);
 
-    Image subImage(int32_t x, int32_t y, int32_t w, int32_t h, bool revert = false);
+    Image subImage(int32_t x, int32_t y, int32_t w, int32_t h, bool inverseY = false);
 
     // -- data -----------------------------------------------------------------
     int32_t width() const;

@@ -60,7 +60,8 @@ bool Image::load(std::string const& file)
 bool Image::load(std::vector<uint8_t> const& data)
 {
     m_data = std::shared_ptr<unsigned char>(
-                stbi_load_from_memory(&data[0], int(data.size()), &m_width, &m_height, &m_channels, 0),
+                stbi_load_from_memory(&data[0], static_cast<int>(data.size()),
+                                      &m_width, &m_height, &m_channels, 0),
                 [] (unsigned char* ptr) { stbi_image_free(ptr); });
     if (!m_data.get()) {
         std::cerr << "Texture failed to load from memory" << std::endl;
@@ -71,7 +72,7 @@ bool Image::load(std::vector<uint8_t> const& data)
 }
 
 // -----------------------------------------------------------------------------
-void Image::save_png(std::string const& file)
+void Image::savePng(std::string const& file)
 {
     int32_t w = width();
     int32_t h = height();
@@ -100,19 +101,20 @@ void Image::save_png(std::string const& file)
 }
 
 // -----------------------------------------------------------------------------
-Image Image::subImage(int32_t x, int32_t y, int32_t w, int32_t h, bool revert)
+Image Image::subImage(int32_t x, int32_t y, int32_t w, int32_t h, bool inverseY)
 {
     Image result;
     result.m_width    = w;
     result.m_height   = h;
     result.m_channels = m_channels;
     result.m_data     = std::shared_ptr<unsigned char>(
-                reinterpret_cast<unsigned char*>(malloc(std::size_t(m_channels * w * h))),
+                reinterpret_cast<unsigned char*>(
+                    malloc(static_cast<std::size_t>(m_channels * w * h))),
                 [] (unsigned char* ptr) { free(ptr); });
     for (int32_t ix = 0; ix < w; ++ix) {
         for (int32_t iy = 0; iy < h; ++iy) {
             for (int32_t c = 0; c < m_channels; ++c) {
-                int32_t index1 = m_channels * (ix + (revert ? (h - iy - 1) : iy)* w) + c;
+                int32_t index1 = m_channels * (ix + (inverseY ? (h - iy - 1) : iy) * w) + c;
                 int32_t index2 = m_channels * ((ix + x) + (iy + y) * m_width) + c;
                 result.m_data.get()[index1] = m_data.get()[index2];
             }
@@ -153,8 +155,10 @@ void Image::onLoad()
         m_width   = 1;
         m_height  = 1;
         m_channels= 4;
-        m_data    = std::shared_ptr<unsigned char>(reinterpret_cast<unsigned char*>(malloc(4)),
-                                                   [] (unsigned char* ptr) { free(ptr); });
+        m_data    = std::shared_ptr<unsigned char>(
+                    reinterpret_cast<unsigned char*>(
+                        malloc(static_cast<std::size_t>(m_channels))),
+                    [] (unsigned char* ptr) { free(ptr); });
         m_data.get()[0] = static_cast<unsigned char>(255);
         m_data.get()[1] = static_cast<unsigned char>(0);
         m_data.get()[2] = static_cast<unsigned char>(255);
